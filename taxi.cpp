@@ -100,14 +100,14 @@ std::vector<std::vector<int>> Taxi::CaminoMinimo() {
   predecesores[taxiX][taxiY] = coordenadas;
 
   while (coordenadas[0] != destinoX || coordenadas[1] != destinoY) { // Comprueba el ultimo elemento de posibles para ver si es el destino
-    
+
     posibles.pop_back();
     
     if (MovArriba(coordenadas)) {
       auxiliar = coordenadas;
       auxiliar[0]--;
       if (predecesores[auxiliar[0]][auxiliar[1]].size() == 0) {
-        posibles.push_back(auxiliar);
+        posibles.insert(posibles.begin(), auxiliar);
         predecesores[auxiliar[0]][auxiliar[1]] = coordenadas;
       }
     }
@@ -115,7 +115,7 @@ std::vector<std::vector<int>> Taxi::CaminoMinimo() {
       auxiliar = coordenadas;
       auxiliar[1]++;
       if (predecesores[auxiliar[0]][auxiliar[1]].size() == 0) {
-        posibles.push_back(auxiliar);
+        posibles.insert(posibles.begin(), auxiliar);
         predecesores[auxiliar[0]][auxiliar[1]] = coordenadas;
       }
     }
@@ -123,7 +123,7 @@ std::vector<std::vector<int>> Taxi::CaminoMinimo() {
       auxiliar = coordenadas;
       auxiliar[0]++;
       if (predecesores[auxiliar[0]][auxiliar[1]].size() == 0) {
-        posibles.push_back(auxiliar);
+        posibles.insert(posibles.begin(), auxiliar);
         predecesores[auxiliar[0]][auxiliar[1]] = coordenadas;
       }
     }
@@ -131,9 +131,14 @@ std::vector<std::vector<int>> Taxi::CaminoMinimo() {
       auxiliar = coordenadas;
       auxiliar[1]--;
       if (predecesores[auxiliar[0]][auxiliar[1]].size() == 0) {
-        posibles.push_back(auxiliar);
+        posibles.insert(posibles.begin(), auxiliar);
         predecesores[auxiliar[0]][auxiliar[1]] = coordenadas;
       }
+    }
+
+    if (posibles.empty()) {
+      std::vector<std::vector<int>> error;
+      return error;
     }
 
     coordenadas[0] = posibles[posibles.size() - 1][0];
