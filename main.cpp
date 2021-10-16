@@ -18,9 +18,9 @@ int main(int argc, char *argv[]) {
     std::cout << "Introduzca las dimensiones de la matriz X*Y" << std::endl;
     do {
       std::cout << "Dimension X: ";
-      std::cin >> dimY;
-      std::cout << "Dimension Y: ";
       std::cin >> dimX;
+      std::cout << "Dimension Y: ";
+      std::cin >> dimY;
       if (dimX <= 0 || dimY <= 0) {
         std::cout << "El valor no puede ser menor o igual que cero" << std::endl;
       }
@@ -51,9 +51,9 @@ int main(int argc, char *argv[]) {
 
     do {
       std::cout << "Introduzca la coordenada en donde se situara el taxi" << std::endl << "Posicion del taxi X: ";
-      std::cin >> taxiY;
-      std::cout << "Posicion del taxi Y: ";
       std::cin >> taxiX;
+      std::cout << "Posicion del taxi Y: ";
+      std::cin >> taxiY;
       if (taxiX < 0 || taxiX >= dimX || taxiY < 0 || taxiY >= dimY || (MainWorld.Status(taxiX, taxiY) == obstaculo_)) {
         std::cout << "Esa casilla no existe o se encuentra obstaculizada" << std::endl;
       }
@@ -61,9 +61,9 @@ int main(int argc, char *argv[]) {
 
     do {
       std::cout << "Introduzca la coordenada en donde se situara el destino" << std::endl << "Posicion del destino X: ";
-      std::cin >> destinoY;
-      std::cout << "Posicion del destino Y: ";
       std::cin >> destinoX;
+      std::cout << "Posicion del destino Y: ";
+      std::cin >> destinoY;
       if (destinoX < 0 || destinoX >= dimX || destinoY < 0 || destinoY >= dimY || (destinoX == taxiX && destinoY == taxiY) || (MainWorld.Status(destinoX, destinoY) == obstaculo_)) {
         std::cout << "Esa casilla no existe, se encuentra obstaculizada o es la de inicio" << std::endl;
       }
@@ -88,7 +88,7 @@ int main(int argc, char *argv[]) {
 
   std::vector<std::vector<int>> Camino = MainTaxi.CaminoMinimo();
   
-  for (int i = Camino.size() - 1; i < 0; i--) {
+  for (int i = (Camino.size() - 1); i >= 0; i--) {
     std::cout << Camino[i][0] << " - " << Camino[i][1] << std::endl;
   }
 

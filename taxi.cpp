@@ -41,7 +41,7 @@ void Taxi::PrintMundo() {
 
 //Movimientos
 bool Taxi::MovLegal(int movX, int movY) {
-  if(movX >= World.GetDimensionX() || movY >= World.GetDimensionY()){
+  if(movX >= World.GetDimensionX() || movY >= World.GetDimensionY() || movX < 0 || movY < 0){
     return false;
   }
   if (World.Status(movX, movY) == obstaculo_) {
@@ -51,22 +51,14 @@ bool Taxi::MovLegal(int movX, int movY) {
 }
 
 bool Taxi::MovDer(std::vector<int> coord) {
-  int nextpos = coord[0];
+  int nextpos = coord[1];
   nextpos++;                                     
-  if(MovLegal(nextpos, coord[1]))
+  if(MovLegal(coord[0], nextpos))
     return true;
   return false;
 }
 
 bool Taxi::MovIzq(std::vector<int> coord) {
-  int nextpos = coord[0];
-  nextpos--;
-  if(MovLegal(nextpos, coord[1]))
-    return true;
-  return false;
-}
-
-bool Taxi::MovArriba(std::vector<int> coord) {
   int nextpos = coord[1];
   nextpos--;
   if(MovLegal(coord[0], nextpos))
@@ -74,10 +66,18 @@ bool Taxi::MovArriba(std::vector<int> coord) {
   return false;
 }
 
+bool Taxi::MovArriba(std::vector<int> coord) {
+  int nextpos = coord[0];
+  nextpos--;
+  if(MovLegal(nextpos, coord[1]))
+    return true;
+  return false;
+}
+
 bool Taxi::MovAbajo(std::vector<int> coord) {
-  int nextpos = coord[1];
+  int nextpos = coord[0];
   nextpos++;
-  if(MovLegal(coord[0] ,nextpos))
+  if(MovLegal(nextpos, coord[1]))
     return true;
   return false;
 }
@@ -99,34 +99,41 @@ std::vector<std::vector<int>> Taxi::CaminoMinimo() {
 
   predecesores[taxiX][taxiY] = coordenadas;
 
-  while (coordenadas[0] != destinoX && coordenadas[1] != destinoY) { // Comprueba el ultimo elemento de posibles para ver si es el destino
+  while (coordenadas[0] != destinoX || coordenadas[1] != destinoY) { // Comprueba el ultimo elemento de posibles para ver si es el destino
     
     posibles.pop_back();
     
     if (MovArriba(coordenadas)) {
       auxiliar = coordenadas;
-      auxiliar[1]--;
-      posibles.push_back(auxiliar);
-      predecesores[auxiliar[0]][auxiliar[1]] = coordenadas;
-
+      auxiliar[0]--;
+      if (predecesores[auxiliar[0]][auxiliar[1]].size() == 0) {
+        posibles.push_back(auxiliar);
+        predecesores[auxiliar[0]][auxiliar[1]] = coordenadas;
+      }
     }
     if (MovDer(coordenadas)) {
       auxiliar = coordenadas;
-      auxiliar[0]++;
-      posibles.push_back(auxiliar);
-      predecesores[auxiliar[0]][auxiliar[1]] = coordenadas;
+      auxiliar[1]++;
+      if (predecesores[auxiliar[0]][auxiliar[1]].size() == 0) {
+        posibles.push_back(auxiliar);
+        predecesores[auxiliar[0]][auxiliar[1]] = coordenadas;
+      }
     }
     if (MovAbajo(coordenadas)) {
       auxiliar = coordenadas;
-      auxiliar[1]++;
-      posibles.push_back(auxiliar);
-      predecesores[auxiliar[0]][auxiliar[1]] = coordenadas;
+      auxiliar[0]++;
+      if (predecesores[auxiliar[0]][auxiliar[1]].size() == 0) {
+        posibles.push_back(auxiliar);
+        predecesores[auxiliar[0]][auxiliar[1]] = coordenadas;
+      }
     }
     if (MovIzq(coordenadas)) {
       auxiliar = coordenadas;
-      auxiliar[0]--;
-      posibles.push_back(auxiliar);
-      predecesores[auxiliar[0]][auxiliar[1]] = coordenadas;
+      auxiliar[1]--;
+      if (predecesores[auxiliar[0]][auxiliar[1]].size() == 0) {
+        posibles.push_back(auxiliar);
+        predecesores[auxiliar[0]][auxiliar[1]] = coordenadas;
+      }
     }
 
     coordenadas[0] = posibles[posibles.size() - 1][0];
@@ -141,7 +148,7 @@ std::vector<std::vector<int>> Taxi::CaminoMinimo() {
     caminoMinimo.push_back(predecesores[coordenadas[0]][coordenadas[1]]);
     coordenadas[0] = caminoMinimo[caminoMinimo.size() - 1][0];
     coordenadas[1] = caminoMinimo[caminoMinimo.size() - 1][1];
-  } while (coordenadas[0] != taxiX && coordenadas[1] != taxiY);
+  } while (coordenadas[0] != taxiX || coordenadas[1] != taxiY);
   
   return caminoMinimo;
 }
