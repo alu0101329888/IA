@@ -4,7 +4,9 @@
 #include <string>
 #include "mundo.hpp"
 #include "taxi.hpp"
+
 // g++ -g -Wall main.cpp mundo.cpp taxi.cpp -o main
+
 int main(int argc, char *argv[]) {
 
   int dimX, dimY, taxiX, taxiY, destinoX, destinoY, numObstaculos;
