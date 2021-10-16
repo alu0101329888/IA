@@ -3,16 +3,16 @@
 Mundo::Mundo(){
 }
 
-Mundo::Mundo(int DimX, int DimY) {
-  Rejilla.resize(DimY);
-  for (int i = 0; i < DimY; i++) {
-    Rejilla[i].resize(DimX);
+void Mundo::Resize(int DimX, int DimY) {
+  Rejilla.resize(DimX);
+  for (int i = 0; i < DimX; i++) {
+    Rejilla[i].resize(DimY);
   }
   DimensionX = DimX;
   DimensionY = DimY;
 }
 
-Mundo::Mundo(std::ifstream & Fichero) {
+void Mundo::Load(std::ifstream & Fichero) {
   std::string Lectura;
   int Columna = 0;
   while (!Fichero.eof()) {
@@ -34,9 +34,13 @@ int Mundo:: GetDimensionY(void) {
   return DimensionY;
 }
 
+std::vector<std::vector<int>> Mundo::GetRejilla() {
+  return Rejilla;
+}
+
 void Mundo::PrintMundo() {
   for(int i = 0; i < Rejilla.size(); i++) {
-    for (int j = 0; j < Rejilla[i].size(); j ++){
+    for (int j = 0; j < Rejilla[0].size(); j++){
       std::cout << Rejilla[i][j] << " ";
     }
     std::cout << std::endl;
@@ -48,11 +52,14 @@ int Mundo::Random(int Obstaculos) {
   if (Obstaculos > ((Rejilla.size() * Rejilla[0].size()) - 2)) {
     return -1;
   }
+  if (Obstaculos < 0) {
+    return -2;
+  }
   while (Obstaculos != 0) {
     randX = rand() % DimensionX + 0;
     randY = rand() % DimensionY + 0;
-    if (Rejilla[randY][randX] != _OBSTACULO) {
-      Rejilla[randY][randX] = _OBSTACULO;
+    if (Rejilla[randX][randY] != obstaculo_) {
+      Rejilla[randX][randY] = obstaculo_;
       Obstaculos--;
     }
   }
@@ -60,5 +67,5 @@ int Mundo::Random(int Obstaculos) {
 }
 
 int Mundo::Status(int X, int Y) {
-  return Rejilla[Y][X];
+  return Rejilla[X][Y];
 }

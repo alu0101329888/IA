@@ -6,22 +6,24 @@
 #include <fstream>
 #include <string>
 
-#define _OBSTACULO 1
-#define _VACIO 0
+#define taxi_ 4
+#define obstaculo_ 1
+#define vacio_ 0
 
 class Mundo {
   private:
     std::vector<std::vector<int>> Rejilla;
-    int DimensionX, DimensionY;
+    int DimensionX, DimensionY; 
   public:
     Mundo();
-    Mundo(int DimX, int DimY);
-    Mundo(std::ifstream &Fichero);
+    void Resize(int DimX, int DimY);
+    void Load(std::ifstream &Fichero);
     int Random(int Obstaculos);
     void PrintMundo();
     int Status(int, int);
     int GetDimensionX();
     int GetDimensionY();
+    std::vector<std::vector<int>> GetRejilla();
 };
 
 #endif
