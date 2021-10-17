@@ -9,4 +9,4 @@ Para compilar se requieren la librerías de SFML:
 
 Use `make` para compilar el programa y `make clean` para limpiar el directorio "build" de archivos .o y el ejecutable.
 
-**Taxi** es el ejecutable final, ejecute con `./Taxi` ó `./Taxi <file_dir>` para leer la matriz desde un archivo.
+**"Taxi"** es el ejecutable final, ejecute con `./Taxi` ó `./Taxi <file_dir>` para leer la matriz desde un archivo.
