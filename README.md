@@ -1,8 +1,8 @@
 # - Inteligencia Artificial: Camino mínimo de un taxi.
 
-## - Descripción:
+### - Descripción:
 
-## - Notas:
+### - Notas:
 
 Para compilar se requieren la librerías de SFML:
 `sudo apt-get install libsfml-dev`
