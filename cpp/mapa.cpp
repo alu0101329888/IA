@@ -1,4 +1,4 @@
-#include "mapa.hpp"
+#include "../hpp/mapa.hpp"
                                                                                         // Cargamos un mapa para representar por ventana
 bool Mapa::load(const std::string& tileset, sf::Vector2u tileSize, int* tiles, unsigned int ancho, unsigned int alto) {
 

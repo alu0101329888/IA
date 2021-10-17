@@ -1,17 +1,11 @@
 #include <SFML/Graphics.hpp>
-#include "mapa.hpp"
-#include "mundo.hpp"
-#include "taxi.hpp"
+#include "../hpp/mapa.hpp"
+#include "../hpp/mundo.hpp"
+#include "../hpp/taxi.hpp"
 #include <iostream>
 #include <vector>
 #include <fstream>
 #include <string>
-
-// Para compilar se requieren la librerías de SFML -> sudo apt-get install libsfml-dev
-
-// Use "make" para compilar y "make clean" para limpiar el directorio de archivos .o y el ejecutable
-
-// Taxi es el ejecutable final, ejecute con ./Taxi ó ./Taxi <archivo.extension> para leer de un archivo
 
 int main(int argc, char *argv[]) {
 
@@ -110,12 +104,12 @@ int main(int argc, char *argv[]) {
   MainTaxi.Representacion(Camino, dimX, dimY, levelPath);               // Obtenemos un array de enteros con el camino para representarlo en ventana
 
   Mapa background;                                                      // Creamos y cargamos un mapa con el mundo
-  if (!background.load("casillas.png", sf::Vector2u(32, 32), level, dimY, dimX)) {
+  if (!background.load("./sprites/casillas.png", sf::Vector2u(32, 32), level, dimY, dimX)) {
     return -1;
   }
 
   Mapa path;                                                            // Creamos y cargamos un mapa con el camino
-  if (!path.load("camino.png", sf::Vector2u(32, 32), levelPath, dimY, dimX)) {
+  if (!path.load("./sprites/camino.png", sf::Vector2u(32, 32), levelPath, dimY, dimX)) {
     return -1;
   }
 

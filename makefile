@@ -1,18 +1,18 @@
 
-Taxi: main.o taxi.o mundo.o mapa.o
-	g++ main.o taxi.o mundo.o mapa.o -o Taxi -lsfml-graphics -lsfml-window -lsfml-system
+Taxi: ./build/main.o ./build/taxi.o ./build/mundo.o ./build/mapa.o
+	g++ -g -Wall ./build/main.o ./build/taxi.o ./build/mundo.o ./build/mapa.o -o Taxi -lsfml-graphics -lsfml-window -lsfml-system
 
-main.o: main.cpp
-	g++ -c main.cpp
+./build/main.o: ./cpp/main.cpp
+	g++ -c ./cpp/main.cpp -o ./build/main.o
 
-taxi.o: taxi.cpp taxi.hpp
-	g++ -c taxi.cpp
+./build/taxi.o: ./cpp/taxi.cpp ./hpp/taxi.hpp
+	g++ -c ./cpp/taxi.cpp -o ./build/taxi.o
 
-mundo.o: mundo.cpp mundo.hpp
-	g++ -c mundo.cpp
+./build/mundo.o: ./cpp/mundo.cpp ./hpp/mundo.hpp
+	g++ -c ./cpp/mundo.cpp -o ./build/mundo.o
 
-mapa.o: mapa.cpp mapa.hpp
-	g++ -c mapa.cpp
+./build/mapa.o: ./cpp/mapa.cpp ./hpp/mapa.hpp
+	g++ -c ./cpp/mapa.cpp -o ./build/mapa.o
 
 clean:
-	rm *.o Taxi
+	rm ./build/*.o Taxi

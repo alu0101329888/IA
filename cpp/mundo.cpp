@@ -1,4 +1,4 @@
-#include "mundo.hpp"
+#include "../hpp/mundo.hpp"
 
 Mundo::Mundo(){                                                                 // Constructor por defecto
 }
