@@ -5,24 +5,29 @@
 
 class Taxi {
   private:
+  
     int taxiX, taxiY;
     int destinoX, destinoY;
-    Mundo World;
+    Mundo world;
 
   public:
-    Taxi(Mundo MainWorld, int coordX, int coordY, int destX, int destY);
+
+    Taxi(Mundo mainWorld, int coordX, int coordY, int destX, int destY);
     ~Taxi();
-    std::vector<int> GetTaxiPos(void);
-    void SetTaxiPos(int X, int Y);
-    void SetDestino(int  X, int Y);
+
     bool MovDer(std::vector<int>);
     bool MovIzq(std::vector<int>);
     bool MovArriba(std::vector<int>);
     bool MovAbajo(std::vector<int>);
+
     bool MovLegal(int movX, int movY);
+
     void PrintMundo(void);
+
     std::vector<std::vector<int>> CaminoMinimo();
-    //PrinTaxiEnv()
+
+    int* Representacion(Mundo matriz, int level[]);
+    int* Representacion(std::vector<std::vector<int>> camino, int dimensionX, int dimensionY, int levelPath[]);
 };
 
 #endif

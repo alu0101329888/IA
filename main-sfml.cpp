@@ -7,21 +7,24 @@
 #include <fstream>
 #include <string>
 
+// Para compilar se requieren la librerías de SFML -> sudo apt-get install libsfml-dev
+// Instrucciones de compilación:
 // g++ -c main-sfml.cpp
-// g++ main-sfml.o -g -Wall taxi.cpp mundo.cpp -o sfml-app -lsfml-graphics -lsfml-window -lsfml-system
+// g++ main-sfml.o -g taxi.cpp mundo.cpp mapa.cpp -o sfml-app -lsfml-graphics -lsfml-window -lsfml-system
+// Siendo main-sfml el ejecutable final
 
 int main(int argc, char *argv[]) {
 
-  int dimX, dimY, taxiX, taxiY, destinoX, destinoY, numObstaculos;
-  int opcion;
-  Mundo MainWorld;
-  
-  //Menu
-  if (argc != 2) {
-    
+  int dimX, dimY, taxiX, taxiY, destinoX, destinoY, numObstaculos;      // Variables donde guardaremos las dimensiones de la matriz, posición del taxi,
+  int opcion;                                                           // posición del destino, el número de obstáculos que tendrá nuestro mundo,
+  Mundo MainWorld;                                                      // una variable opción para elegir a través del menú y nuestro mundo principal.
+                                                                        
+  if (argc != 2) {                                                      // En el caso en el que el programa se abra sin especificar un archivo con el mundo
+
     std::cout << "No se ha especificado un fichero del cual leer, por tanto se introduciran los obstaculos de manera aleatoria." << std::endl;
     std::cout << "Introduzca las dimensiones de la matriz X*Y" << std::endl;
-    do {
+
+    do {                                                                // Recogida del tamaño del mundo
       std::cout << "Dimension X: ";
       std::cin >> dimX;
       std::cout << "Dimension Y: ";
@@ -31,39 +34,39 @@ int main(int argc, char *argv[]) {
       }
     } while (dimX <= 0 || dimY <= 0);
 
-    MainWorld.Resize(dimX, dimY);
+    MainWorld.Resize(dimX, dimY);                                       // Establecemos el tamaño del mundo
     
     std::cout << "Introduzca el numero de obstaculos a colocar o -1 para elegir uno aleatorio: ";
     std::cin >> opcion;
 
-    while (opcion < -1 || opcion > (dimX*dimY - 2)) {
+    while (opcion < -1 || opcion > (dimX*dimY - 2)) {                   // Elegimos el número de obstáculos que se colocarán aleatoriamente en el mundo
         std::cout << "Cantidad de obstaculos no permitida, escoja otra cantidad o seleccione -1 para poner un numero aleatorio" << std::endl;
         std::cin >> opcion;
     }
 
-    if (opcion == -1) {
-      numObstaculos = (rand() % dimX*dimY + 0) - 2;
+    if (opcion == -1) {                                                 // Genera un numero aleatorio entre 0 y dimX*dimY
+      numObstaculos = (rand() % dimX*dimY + 0) - 2;                     // (-2 para que haya espacio para el taxi y el destino, una casilla cada una)
       std::cout << "Elegidos " << numObstaculos << " nº de obstaculos" << std::endl;
-      MainWorld.Random(numObstaculos); //genera un numero aleatorio entre 0 y dimX*dimY
+      MainWorld.Random(numObstaculos);                                  // Se colocan numObstaculos obstáculos de manera aleatoria en el mundo                    
     }
-    else {
+    else {                                                              // Se usa el número de obstáculos elegido por el usuario
       numObstaculos = opcion;
       std::cout << "Elegidos " << numObstaculos << " nº de obstaculos" << std::endl;
-      MainWorld.Random(numObstaculos);
+      MainWorld.Random(numObstaculos);                                  // Se colocan numObstaculos obstáculos de manera aleatoria en el mundo
     }
 
   }
-  else {
-    std::ifstream Archivo;
+  else {                                                                // En el caso en el que se especifique un archivo del cual leer al ejecutar
+    std::ifstream Archivo;                                              // el programa, se lee dicho archivo y se crea un mundo con él
     Archivo.open(argv[1]);
-  
-    if(Archivo.fail()) {
-      std::cout << "Error al abrir el archivo" << argv[1] << std::endl;
-      return -1;
-    }
+                                                                        // El archivo debe contener una matriz de ceros y unos del estilo:
+    if(Archivo.fail()) {                                                // 001101100101010
+      std::cout << "Error al abrir el archivo" << argv[1] << std::endl; // 111011001001001            Donde: 0 = carretera / vacío
+      return -1;                                                        // 000100001000000                   1 = obstáculo
+    }                                                                   //       ...
 
-    MainWorld.Load(Archivo);
-    dimX = MainWorld.GetDimensionX();
+    MainWorld.Load(Archivo);                                            // Se carga el archivo en el mundo
+    dimX = MainWorld.GetDimensionX();                                   // Pasamos a las variables de la dimensión del mundo, el tamaño de la matriz
     dimY = MainWorld.GetDimensionY();
  
     Archivo.close();
@@ -71,7 +74,7 @@ int main(int argc, char *argv[]) {
 
   MainWorld.PrintMundo();
 
-  do {
+  do {                                                                  // Recogemos la posición del taxi en el mundo
     std::cout << "Introduzca la coordenada en donde se situara el taxi" << std::endl << "Posicion del taxi X: ";
     std::cin >> taxiX;
     std::cout << "Posicion del taxi Y: ";
@@ -81,7 +84,7 @@ int main(int argc, char *argv[]) {
     }
   } while(taxiX < 0 || taxiX >= dimX || taxiY < 0 || taxiY >= dimY || (MainWorld.Status(taxiX, taxiY) == obstaculo_));
 
-  do {
+  do {                                                                  // Recogemos la posición del destino en el mundo
     std::cout << "Introduzca la coordenada en donde se situara el destino" << std::endl << "Posicion del destino X: ";
     std::cin >> destinoX;
     std::cout << "Posicion del destino Y: ";
@@ -91,77 +94,44 @@ int main(int argc, char *argv[]) {
     }
   } while(destinoX < 0 || destinoX >= dimX || destinoY < 0 || destinoY >= dimY || (destinoX == taxiX && destinoY == taxiY) || (MainWorld.Status(destinoX, destinoY) == obstaculo_));
   
-  Taxi MainTaxi(MainWorld, taxiX, taxiY, destinoX, destinoY);
+  Taxi MainTaxi(MainWorld, taxiX, taxiY, destinoX, destinoY);           // Creamos la clase Taxi con el mundo y las coordenadas especificadas
 
-  std::vector<std::vector<int>> Camino = MainTaxi.CaminoMinimo();
-  if (Camino.size() == 0) {
-    std::cout << "El taxi no puede llegar a su destino" << std::endl;
-    return -1;
+  std::vector<std::vector<int>> Camino = MainTaxi.CaminoMinimo();       // Calculamos el camino mínimo entre las coordenadas de inicio y destino
+  if (Camino.size() == 0) {                                             
+    std::cout << "El taxi no puede llegar a su destino" << std::endl;   // Si el camino nos llega vacío significa que no hay manera de que el taxi
+    return -1;                                                          // llegue al destino de ninguna forma
   }
 
-  // create the window
-  sf::RenderWindow window(sf::VideoMode(dimY*32, dimX*32), "Mapa");
+  sf::RenderWindow window(sf::VideoMode(dimY*32, dimX*32), "Mapa");     // Abrimos una ventana nueva
 
-  std::vector<std::vector<int>> mapaAuxiliar;
-  mapaAuxiliar = MainWorld.GetRejilla();
-
-  int level[dimX*dimY] = {0};
-  int contador = 0;
-
-  /*for (int i = 0; i < dimX; i++) {
-    for (int j = 0; j < dimY; j++) {
-      if (mapaAuxiliar[i][j] == obstaculo_) {
-        level[contador] = (rand() % 3) + 1;
-      }
-      else {
-        level[contador] = vacio_;
-      }
-      contador++;
-    }
-  }*/
-
-  for (int i = 0; i < dimX; i++) {
-    for (int j = 0; j < dimY; j++) {
-      level[contador] = mapaAuxiliar[i][j];
-      contador++;
-    }
-  }
-
+  int level[dimX*dimY] = {0}; 
   int levelPath[dimX*dimY] = {0};
-  for (int i = 0; i < Camino.size(); i++) {
-    levelPath[(Camino[i][0]*dimY) + Camino[i][1]] = 1;
-  }
+  MainTaxi.Representacion(MainWorld, level);                            // Obtenemos un array de enteros con el mundo para representarlo en ventana
+  MainTaxi.Representacion(Camino, dimX, dimY, levelPath);               // Obtenemos un array de enteros con el camino para representarlo en ventana
 
-  Mapa background;
+  Mapa background;                                                      // Creamos y cargamos un mapa con el mundo
   if (!background.load("casillas.png", sf::Vector2u(32, 32), level, dimY, dimX)) {
     return -1;
   }
 
-  Mapa path;
+  Mapa path;                                                            // Creamos y cargamos un mapa con el camino
   if (!path.load("camino.png", sf::Vector2u(32, 32), levelPath, dimY, dimX)) {
     return -1;
   }
 
-  /*for (int i = (Camino.size() - 1); i >= 0; i--) {
-    std::cout << Camino[i][0] << " - " << Camino[i][1] << std::endl;
-  }*/
+  while (window.isOpen()) {                                             // Mientras la ventana esté abierta...
 
-    // run the main loop
-  while (window.isOpen()) {
-    // handle events
-    sf::Event event;
-    while (window.pollEvent(event)) {
-      if(event.type == sf::Event::Closed) {
+    sf::Event event;                                                    // Creamos un evento que manejar
+    while (window.pollEvent(event)) {                                   // Si se ha recogido un evento...
+      if(event.type == sf::Event::Closed) {                             // Si el evento es el de cerrar la ventana, la cerramos
         window.close();
       }
     }
 
-    // draw the map
-    window.clear();
-    window.draw(background);
-    window.draw(path);
-    window.display();
+    window.clear();                                                     // Limpiamos lo dibujado en ventana
+    window.draw(background);                                            // Dibujamos el fondo en ventana
+    window.draw(path);                                                  // Dibujamos (encima del fondo) el camino en la ventana
+    window.display();                                                   // Representamos en pantalla lo dibujado
   }
-
   return 0;
-}
+}                                                                       // FIN

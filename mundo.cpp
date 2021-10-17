@@ -1,65 +1,65 @@
 #include "mundo.hpp"
 
-Mundo::Mundo(){
+Mundo::Mundo(){                                                                 // Constructor por defecto
 }
 
-void Mundo::Resize(int DimX, int DimY) {
-  Rejilla.resize(DimX);
+void Mundo::Resize(int DimX, int DimY) {                                        // Establece el tamaño de la matriz del mundo a lo dado
+  rejilla.resize(DimX);                                                         // y guarda las dimensiones en las variables privadas
   for (int i = 0; i < DimX; i++) {
-    Rejilla[i].resize(DimY);
+    rejilla[i].resize(DimY);
   }
-  DimensionX = DimX;
-  DimensionY = DimY;
+  dimensionX = DimX;
+  dimensionY = DimY;
 }
 
-void Mundo::Load(std::ifstream &Fichero) {
-  std::string Lectura;
-  int Columna = 0;
+void Mundo::Load(std::ifstream &Fichero) {                                      // Lee desde un fichero una matriz de mundo y la guarda
+  std::string Lectura;                                                          
+  int Columna = 0;                                                              // Véase main-sfml.cpp para una explicación del formato del fichero
   while (!Fichero.eof()) {
-    Rejilla.resize(Rejilla.size() + 1);
+    rejilla.resize(rejilla.size() + 1);
     std::getline(Fichero, Lectura);
     for (int Fila = 0; Fila < Lectura.size(); Fila++) {
-      Rejilla[Columna].push_back((int)Lectura[Fila] - 48);
+      rejilla[Columna].push_back((int)Lectura[Fila] - 48);
     }
     Columna++;
   }
-  DimensionX = Rejilla.size();
-  DimensionY = Rejilla[0].size();
+  dimensionX = rejilla.size();
+  dimensionY = rejilla[0].size();
 }
 
-int Mundo:: GetDimensionX(void) {
-  return DimensionX;
+int Mundo::GetDimensionX(void) {                                                // Devuelve la dimensión x de la matriz
+  return dimensionX;
 }
-int Mundo:: GetDimensionY(void) {
-  return DimensionY;
-}
-
-std::vector<std::vector<int>> Mundo::GetRejilla() {
-  return Rejilla;
+int Mundo::GetDimensionY(void) {                                                // Devuelve la dimensión y de la matriz
+  return dimensionY;
 }
 
-void Mundo::PrintMundo() {
-  for(int i = 0; i < Rejilla.size(); i++) {
-    for (int j = 0; j < Rejilla[i].size(); j++){
-      std::cout << Rejilla[i][j] << " ";
+std::vector<std::vector<int>> Mundo::GetRejilla() {                             // Devuelve la matriz
+  return rejilla;
+}
+
+void Mundo::PrintMundo() {                                                      // Representa el mundo por consola
+  for(int i = 0; i < rejilla.size(); i++) {
+    for (int j = 0; j < rejilla[i].size(); j++){
+      std::cout << rejilla[i][j] << " ";
     }
     std::cout << std::endl;
   }
 }
 
-int Mundo::Random(int Obstaculos) {
-  int randX, randY;
+int Mundo::Random(int Obstaculos) {                                             // Coloca un número "Obstaculos" de obstáculos de manera aleatoria
+  int randX, randY;                                                             // en las casillas de la matriz
   while (Obstaculos != 0) {
-    randX = rand() % DimensionX + 0;
-    randY = rand() % DimensionY + 0;
-    if (Rejilla[randX][randY] != obstaculo_) {
-      Rejilla[randX][randY] = obstaculo_;
+    randX = rand() % dimensionX + 0;
+    randY = rand() % dimensionY + 0;
+    if (rejilla[randX][randY] != obstaculo_) {
+      rejilla[randX][randY] = obstaculo_;
       Obstaculos--;
     }
   }
   return 0;
 }
 
-int Mundo::Status(int X, int Y) {
-  return Rejilla[X][Y];
+int Mundo::Status(int X, int Y) {                                               // Devuelve el valor de una casilla dada 
+  return rejilla[X][Y];
 }
