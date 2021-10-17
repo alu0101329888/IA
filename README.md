@@ -1,4 +1,4 @@
-# - Inteligencia Artificial: Camino mínimo de un taxi.
+## - Inteligencia Artificial: Camino mínimo de un taxi.
 
 ### - Descripción:
 
