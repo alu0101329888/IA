@@ -8,10 +8,10 @@
 #include <string>
 
 // Para compilar se requieren la librerías de SFML -> sudo apt-get install libsfml-dev
-// Instrucciones de compilación:
-// g++ -c main-sfml.cpp
-// g++ main-sfml.o -g taxi.cpp mundo.cpp mapa.cpp -o sfml-app -lsfml-graphics -lsfml-window -lsfml-system
-// Siendo main-sfml el ejecutable final
+
+// Use "make" para compilar y "make clean" para limpiar el directorio de archivos .o y el ejecutable
+
+// Taxi es el ejecutable final, ejecute con ./Taxi ó ./Taxi <archivo.extension> para leer de un archivo
 
 int main(int argc, char *argv[]) {
 

@@ -11,7 +11,7 @@ Taxi::Taxi(Mundo mainWorld, int coordX, int coordY, int destX, int destY){      
 Taxi::~Taxi(){                                                                  // Destructor
 }
 
-void Taxi::PrintMundo() {                                                       // Representa el mundo por consola
+void Taxi::PrintMundo() {                                                       // Representa el mundo por consola con el taxi en él
   std::vector<std::vector<int>> malla;
   malla = world.GetRejilla();
   malla[taxiX][taxiY] = taxi_;

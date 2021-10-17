@@ -6,6 +6,7 @@
 #include <fstream>
 #include <string>
 
+#define taxi_ 4
 #define obstaculo_ 1
 #define vacio_ 0
 
