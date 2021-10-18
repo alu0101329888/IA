@@ -28,6 +28,7 @@ class Taxi {
 
     int* Representacion(Mundo matriz, int level[]);
     int* Representacion(std::vector<std::vector<int>> camino, int dimensionX, int dimensionY, int levelPath[]);
+    std::vector<std::vector<std::vector<int>>>  Representacion(Mundo matriz);
 };
 
 #endif

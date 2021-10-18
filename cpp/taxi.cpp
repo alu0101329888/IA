@@ -140,13 +140,13 @@ std::vector<std::vector<int>> Taxi::CaminoMinimo() {                            
   return caminoMinimo;
 }
 
-int* Taxi::Representacion(Mundo rejilla, int level[]) {
+int* Taxi::Representacion(Mundo matriz, int level[]) {
                                           
   int contador = 0;
 
-  for (int i = 0; i < rejilla.GetDimensionX(); i++) {                             // Pasamos la matriz a el array de enteros "level" donde las casillas de
-    for (int j = 0; j < rejilla.GetDimensionY(); j++) {                           // carretera (0) se mantienen como 0 pero las casillas de obstáculos (1)
-      if (rejilla.GetRejilla()[i][j] == obstaculo_) {                             // se mantienen como 1, 2 o 3 siendo éstos unos índices que se usarán
+  for (int i = 0; i < matriz.GetDimensionX(); i++) {                             // Pasamos la matriz a el array de enteros "level" donde las casillas de
+    for (int j = 0; j < matriz.GetDimensionY(); j++) {                           // carretera (0) se mantienen como 0 pero las casillas de obstáculos (1)
+      if (matriz.GetRejilla()[i][j] == obstaculo_) {                             // se mantienen como 1, 2 o 3 siendo éstos unos índices que se usarán
         level[contador] = (rand() % 3) + 1;                                       // posteriormente para elegir una textura de obstáculo a representar
       }                                                                 
       else {                                                            
@@ -161,7 +161,56 @@ int* Taxi::Representacion(Mundo rejilla, int level[]) {
 int* Taxi::Representacion(std::vector<std::vector<int>> camino, int dimensionX, int dimensionY, int levelPath[]) {
   
   for (int i = 0; i < camino.size(); i++) {                                       // Pasamos el vector con el camino mínimo calculado y lo pasamos a un
-    levelPath[(camino[i][0]*dimensionY) + camino[i][1]] = 1;                           // array de enteros donde las casillas que no son parte del camino
+    levelPath[(camino[i][0]*dimensionY) + camino[i][1]] = 1;                      // array de enteros donde las casillas que no son parte del camino
   }                                                                               // valen 0 y las que si son parte del camino valen 1
   return levelPath;
+}
+
+std::vector<std::vector<std::vector<int>>> Taxi::Representacion(Mundo matriz) {
+
+  std::vector<std::vector<std::vector<int>>> levelBordes(8);
+  for (int i = 0; i < 8; i++) {                                                   // Recibimos 8 matrices que usaremos para 8 sprites distintos ya que en cada
+    levelBordes[i].resize(matriz.GetDimensionX());                                // casilla pueden dibujarse hasta un máximo de dichos 8 sprites
+    for (int j = 0; j < matriz.GetDimensionX(); j++) {
+      levelBordes[i][j].resize(matriz.GetDimensionY());
+      for (int k = 0; k < matriz.GetDimensionY(); k++) {
+        levelBordes[i][j][k] = 0;
+      }
+    }
+  }
+  std::vector<int> coord(2, 0);
+
+  for (coord[0] = 0; coord[0] < matriz.GetDimensionX(); coord[0]++) {
+    for (coord[1] = 0; coord[1] < matriz.GetDimensionY(); coord[1]++) {           // Dada la posición de cada casilla se establecerá en cada mapa el número
+      if (!matriz.Status(coord[0], coord[1])) {                                   // de sprite correspondiente y devolvemos el array de matrices
+        if (matriz.Status(coord[0] + 1, coord[1]))
+          levelBordes[0][coord[0]][coord[1]] = 1;
+        if (matriz.Status(coord[0] - 1, coord[1]))
+          levelBordes[1][coord[0]][coord[1]] = 2;
+        if (matriz.Status(coord[0], coord[1] + 1))
+          levelBordes[2][coord[0]][coord[1]] = 3;
+        if (matriz.Status(coord[0], coord[1] - 1))
+          levelBordes[3][coord[0]][coord[1]] = 4;
+        if (matriz.Status(coord[0], coord[1] - 1) && matriz.Status(coord[0] + 1, coord[1]))
+          levelBordes[4][coord[0]][coord[1]] = 5;
+        if (matriz.Status(coord[0], coord[1] - 1) && matriz.Status(coord[0] - 1, coord[1]))
+          levelBordes[5][coord[0]][coord[1]] = 6;
+        if (matriz.Status(coord[0], coord[1] + 1) && matriz.Status(coord[0] - 1, coord[1]))
+          levelBordes[6][coord[0]][coord[1]] = 7;
+        if (matriz.Status(coord[0], coord[1] + 1) && matriz.Status(coord[0] + 1, coord[1]))
+          levelBordes[7][coord[0]][coord[1]] = 8;
+      }
+      else if (matriz.Status(coord[0], coord[1])) {
+        if (!matriz.Status(coord[0], coord[1] - 1) && !matriz.Status(coord[0] + 1, coord[1]) && !matriz.Status(coord[0] + 1, coord[1] - 1))
+          levelBordes[6][coord[0] + 1][coord[1] - 1] = 7;
+        if (!matriz.Status(coord[0], coord[1] - 1) && !matriz.Status(coord[0] - 1, coord[1]) && !matriz.Status(coord[0] - 1, coord[1] - 1))
+          levelBordes[7][coord[0] - 1][coord[1] - 1] = 8;
+        if (!matriz.Status(coord[0], coord[1] + 1) && !matriz.Status(coord[0] - 1, coord[1]) && !matriz.Status(coord[0] - 1, coord[1] + 1))
+          levelBordes[4][coord[0] - 1][coord[1] + 1] = 5;
+        if (!matriz.Status(coord[0], coord[1] + 1) && !matriz.Status(coord[0] + 1, coord[1]) && !matriz.Status(coord[0] + 1, coord[1] + 1))
+          levelBordes[5][coord[0] + 1][coord[1] + 1] = 6;
+      }
+    }
+  }
+  return levelBordes;
 }

@@ -61,5 +61,8 @@ int Mundo::Random(int Obstaculos) {                                             
 }
 
 int Mundo::Status(int X, int Y) {                                               // Devuelve el valor de una casilla dada 
-  return rejilla[X][Y];
+  if (X < dimensionX && X >= 0 && Y < dimensionY && Y >= 0)
+    return rejilla[X][Y];
+  else
+    return -1;
 }

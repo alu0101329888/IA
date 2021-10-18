@@ -7,6 +7,17 @@
 #include <fstream>
 #include <string>
 
+int* ConvertToArray (std::vector<std::vector<int>> level, int levelArray[]) {
+  int contador = 0;
+  for (int i = 0; i < level.size(); i++) {
+    for (int j = 0; j < level[0].size(); j++) {
+      levelArray[contador] = level[i][j];
+      contador++;
+    }
+  }
+  return levelArray;
+}
+
 int main(int argc, char *argv[]) {
 
   int dimX, dimY, taxiX, taxiY, destinoX, destinoY, numObstaculos;      // Variables donde guardaremos las dimensiones de la matriz, posición del taxi,
@@ -100,7 +111,28 @@ int main(int argc, char *argv[]) {
 
   int level[dimX*dimY] = {0}; 
   int levelPath[dimX*dimY] = {0};
+  int levelBordes[8][dimX*dimY] = {0};
+
+  std::vector<std::vector<std::vector<int>>> levelMatrizBordes;
+
   MainTaxi.Representacion(MainWorld, level);                            // Obtenemos un array de enteros con el mundo para representarlo en ventana
+  levelMatrizBordes = MainTaxi.Representacion(MainWorld);                      // Obtenemos los array de bordes de casilla
+  for (int i = 0; i < levelMatrizBordes.size(); i++) {
+    ConvertToArray(levelMatrizBordes[i], levelBordes[i]);
+  }
+  
+  /*for (int i = 0; i < levelMatrizBordes[0].size(); i++) {
+    for (int j = 0; j < levelMatrizBordes[0][i].size(); j++) {
+      std::cout << levelMatrizBordes[0][i][j] << " ";
+    }
+  }
+  std::cout << std::endl;*/
+
+  /*for (int i = 0; i < sizeof(levelBordes[0]); i++) {
+    std::cout << levelBordes[0][i] << " ";
+  }
+  std::cout << std::endl;*/
+
   MainTaxi.Representacion(Camino, dimX, dimY, levelPath);               // Obtenemos un array de enteros con el camino para representarlo en ventana
 
   Mapa background;                                                      // Creamos y cargamos un mapa con el mundo
@@ -111,6 +143,13 @@ int main(int argc, char *argv[]) {
   Mapa path;                                                            // Creamos y cargamos un mapa con el camino
   if (!path.load("./sprites/camino.png", sf::Vector2u(32, 32), levelPath, dimY, dimX)) {
     return -1;
+  }
+
+  Mapa bordes[8];
+  for (int i = 0; i < 8; i++) {
+    if (!bordes[i].load("./sprites/bordes.png", sf::Vector2u(32, 32), levelBordes[i], dimY, dimX)) {
+      return -1;
+    }
   }
 
   while (window.isOpen()) {                                             // Mientras la ventana esté abierta...
@@ -124,6 +163,9 @@ int main(int argc, char *argv[]) {
 
     window.clear();                                                     // Limpiamos lo dibujado en ventana
     window.draw(background);                                            // Dibujamos el fondo en ventana
+    for (int i = 0; i < 8; i++) {
+      window.draw(bordes[i]);                                           // Dibujamos los bordes de césped de las casillas
+    }
     window.draw(path);                                                  // Dibujamos (encima del fondo) el camino en la ventana
     window.display();                                                   // Representamos en pantalla lo dibujado
   }
