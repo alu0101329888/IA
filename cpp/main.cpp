@@ -110,28 +110,16 @@ int main(int argc, char *argv[]) {
   sf::RenderWindow window(sf::VideoMode(dimY*32, dimX*32), "Mapa");     // Abrimos una ventana nueva
 
   int level[dimX*dimY] = {0}; 
-  int levelPath[dimX*dimY] = {0};
+  int levelPath[dimX*dimY] = {0};                                       // Creamos los 3 arrays de enteros que usaremos para dibujar en pantalla
   int levelBordes[8][dimX*dimY] = {0};
 
   std::vector<std::vector<std::vector<int>>> levelMatrizBordes;
 
   MainTaxi.Representacion(MainWorld, level);                            // Obtenemos un array de enteros con el mundo para representarlo en ventana
-  levelMatrizBordes = MainTaxi.Representacion(MainWorld);                      // Obtenemos los array de bordes de casilla
-  for (int i = 0; i < levelMatrizBordes.size(); i++) {
-    ConvertToArray(levelMatrizBordes[i], levelBordes[i]);
+  levelMatrizBordes = MainTaxi.Representacion(MainWorld);               // Obtenemos los array de enteros con los bordes de casilla para representarlo en
+  for (int i = 0; i < levelMatrizBordes.size(); i++) {                  // ventana, la función devuelve un array de matrices así que la convertiremos con
+    ConvertToArray(levelMatrizBordes[i], levelBordes[i]);               // ConvertToArray() para obtener el array de enteros
   }
-  
-  /*for (int i = 0; i < levelMatrizBordes[0].size(); i++) {
-    for (int j = 0; j < levelMatrizBordes[0][i].size(); j++) {
-      std::cout << levelMatrizBordes[0][i][j] << " ";
-    }
-  }
-  std::cout << std::endl;*/
-
-  /*for (int i = 0; i < sizeof(levelBordes[0]); i++) {
-    std::cout << levelBordes[0][i] << " ";
-  }
-  std::cout << std::endl;*/
 
   MainTaxi.Representacion(Camino, dimX, dimY, levelPath);               // Obtenemos un array de enteros con el camino para representarlo en ventana
 
@@ -146,7 +134,7 @@ int main(int argc, char *argv[]) {
   }
 
   Mapa bordes[8];
-  for (int i = 0; i < 8; i++) {
+  for (int i = 0; i < 8; i++) {                                         // Creamos y cargamos los 8 mapas de bordes de casilla
     if (!bordes[i].load("./sprites/bordes.png", sf::Vector2u(32, 32), levelBordes[i], dimY, dimX)) {
       return -1;
     }
