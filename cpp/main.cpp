@@ -107,7 +107,10 @@ int main(int argc, char *argv[]) {
     return -1;                                                          // llegue al destino de ninguna forma
   }
 
-  sf::RenderWindow window(sf::VideoMode(dimY*32, dimX*32), "Mapa");     // Abrimos una ventana nueva
+  sf::RenderWindow window(sf::VideoMode(1000, 800), "Mapa");            // Abrimos una ventana nueva
+  sf::View vista(sf::Vector2f((dimY*32)/2, (dimX*32)/2), sf::Vector2f(window.getSize().x, window.getSize().y));
+  window.setView(vista);
+
 
   int level[dimX*dimY] = {0}; 
   int levelPath[dimX*dimY] = {0};                                       // Creamos los 3 arrays de enteros que usaremos para dibujar en pantalla
@@ -140,12 +143,48 @@ int main(int argc, char *argv[]) {
     }
   }
 
+  sf::Vector2f oldPos;
+  bool mover = false;
   while (window.isOpen()) {                                             // Mientras la ventana esté abierta...
 
     sf::Event event;                                                    // Creamos un evento que manejar
     while (window.pollEvent(event)) {                                   // Si se ha recogido un evento...
-      if(event.type == sf::Event::Closed) {                             // Si el evento es el de cerrar la ventana, la cerramos
-        window.close();
+      switch (event.type) {
+        case (sf::Event::Closed):                                        // Si el evento es el de cerrar la ventana, la cerramos
+          window.close();
+          break;
+        case (sf::Event::MouseWheelScrolled):
+          if (!mover) {
+            if (event.mouseWheelScroll.delta < 0)
+              vista.zoom(1.1);
+            else if (event.mouseWheelScroll.delta > 0)
+              vista.zoom(0.9);
+            window.setView(vista);
+          }
+          break;
+        case (sf::Event::MouseButtonPressed):
+          if (event.mouseButton.button == 0) {
+            mover = true;
+            oldPos = window.mapPixelToCoords(sf::Vector2i(event.mouseButton.x, event.mouseButton.y));
+          }
+          break;
+        case (sf::Event::MouseButtonReleased):
+          if (event.mouseButton.button == 0)
+            mover = false;
+          break;
+        case (sf::Event::MouseMoved):
+          if (mover) {
+            const sf::Vector2f newPos = window.mapPixelToCoords(sf::Vector2i(event.mouseMove.x, event.mouseMove.y));
+            const sf::Vector2f deltaPos = oldPos - newPos;
+            vista.setCenter(vista.getCenter() + deltaPos);
+            window.setView(vista);
+            oldPos = window.mapPixelToCoords(sf::Vector2i(event.mouseMove.x, event.mouseMove.y));
+          }
+          break;
+        case (sf::Event::Resized):
+          vista.setSize(window.getSize().x, window.getSize().y);
+          window.setView(vista);
+          break;
       }
     }
 
