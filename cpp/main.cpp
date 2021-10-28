@@ -2,6 +2,7 @@
 #include "../hpp/mapa.hpp"
 #include "../hpp/mundo.hpp"
 #include "../hpp/taxi.hpp"
+#include "../hpp/nodo.hpp"
 #include <iostream>
 #include <vector>
 #include <fstream>
@@ -101,7 +102,7 @@ int main(int argc, char *argv[]) {
   
   Taxi MainTaxi(MainWorld, taxiX, taxiY, destinoX, destinoY);           // Creamos la clase Taxi con el mundo y las coordenadas especificadas
 
-  std::vector<std::vector<int>> Camino = MainTaxi.CaminoMinimo();       // Calculamos el camino mínimo entre las coordenadas de inicio y destino
+  std::vector<std::vector<int>> Camino = MainTaxi.CaminoMinimo(0);       // Calculamos el camino mínimo entre las coordenadas de inicio y destino
   if (Camino.size() == 0) {                                             
     std::cout << "El taxi no puede llegar a su destino" << std::endl;   // Si el camino nos llega vacío significa que no hay manera de que el taxi
     return -1;                                                          // llegue al destino de ninguna forma

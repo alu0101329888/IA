@@ -1,6 +1,7 @@
 #ifndef TAXI_H
 #define TAXI_H
 
+#include "nodo.hpp"
 #include "mundo.hpp"
 
 class Taxi {
@@ -9,7 +10,7 @@ class Taxi {
     int taxiX, taxiY;
     int destinoX, destinoY;
     Mundo world;
-
+    
   public:
 
     Taxi(Mundo mainWorld, int coordX, int coordY, int destX, int destY);
@@ -19,12 +20,14 @@ class Taxi {
     bool MovIzq(std::vector<int>);
     bool MovArriba(std::vector<int>);
     bool MovAbajo(std::vector<int>);
+    float Heuristica(bool distancia, int coordX, int coordY);
 
     bool MovLegal(int movX, int movY);
 
     void PrintMundo(void);
 
-    std::vector<std::vector<int>> CaminoMinimo();
+    std::vector<std::vector<int>> CaminoMinimo(bool distancia);
+
 
     int* Representacion(Mundo matriz, int level[]);
     int* Representacion(std::vector<std::vector<int>> camino, int dimensionX, int dimensionY, int levelPath[]);

@@ -5,6 +5,7 @@
 #include <vector>
 #include <fstream>
 #include <string>
+#include <utility>
 
 #define taxi_ 4
 #define obstaculo_ 1
@@ -15,7 +16,6 @@ class Mundo {
   
     std::vector<std::vector<int>> rejilla;
     int dimensionX, dimensionY; 
-
   public:
   
     Mundo();
