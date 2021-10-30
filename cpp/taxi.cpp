@@ -65,7 +65,47 @@ bool Taxi::MovAbajo(std::vector<int> coord) {                                   
   return false;
 }
 
-/*std::vector<std::vector<int>> Taxi::CaminoMinimo(bool distancia) {                            // Calcula el camino mínimo dado el lugar de inicio del taxi y el destino
+bool Taxi::MovAbajoIzq(std::vector<int> coord) {                                   // Devuelve true o false si un mov. hacia abajo desde la casilla
+  int nextpos0 = coord[0];
+  int nextpos1 = coord[1];                                                     // especificada es legal o no
+  nextpos0++;
+  nextpos1--;
+  if(MovLegal(nextpos0, nextpos1))
+    return true;
+  return false;
+}
+
+bool Taxi::MovAbajoDer(std::vector<int> coord) {                                   // Devuelve true o false si un mov. hacia abajo desde la casilla
+  int nextpos0 = coord[0];
+  int nextpos1 = coord[1];                                                       // especificada es legal o no
+  nextpos0++;
+  nextpos1++;
+  if(MovLegal(nextpos0, nextpos1))
+    return true;
+  return false;
+}
+
+bool Taxi::MovArribaDer(std::vector<int> coord) {                                  // Devuelve true o false si un mov. hacia arriba desde la casilla
+  int nextpos0 = coord[0];                                                       // especificada es legal o no
+  int nextpos1 = coord[1];
+  nextpos0--;
+  nextpos1++;
+  if(MovLegal(nextpos0, nextpos1))
+    return true;
+  return false;
+}
+
+bool Taxi::MovArribaIzq(std::vector<int> coord) {                                  // Devuelve true o false si un mov. hacia arriba desde la casilla
+  int nextpos0 = coord[0];                                                       // especificada es legal o no
+  int nextpos1 = coord[1];
+  nextpos0--;
+  nextpos1--;
+  if(MovLegal(nextpos0, nextpos1))
+    return true;
+  return false;
+}
+
+/*std::vector<std::vector<int>> Taxi::CaminoMinimoNoInformado(bool distancia) { // Calcula el camino mínimo dado el lugar de inicio del taxi y el destino
   std::vector<std::vector<int>> posibles;                                       // Posibles guarda las casillas alcanzadas a analizar
   std::vector<std::vector<std::vector<int>>> predecesores;                      // Predecesores guarda las casillas ya analizadas con su predecesor
 
@@ -215,7 +255,7 @@ std::vector<std::vector<std::vector<int>>> Taxi::Representacion(Mundo matriz) {
   return levelBordes;
 }
 
-std::vector<std::vector<int>> Taxi::CaminoMinimo(bool distancia) {
+std::vector<std::vector<int>> Taxi::CaminoMinimo4(bool distancia) {
 
   std::vector<std::vector<Nodo>> matrizNodos;
   std::vector<std::vector<int>> abierta;
@@ -366,11 +406,11 @@ std::vector<std::vector<int>> Taxi::CaminoMinimo(bool distancia) {
     if (MovIzq(nodoActual)) {
       bool pertenece = 0;
       for (int i = 0; i < cerrada.size(); i++) {
-        if (!(nodoActual[0] == cerrada[i][0]) && !(nodoActual[1] - 1 == cerrada[i][1])) {
+        if ((nodoActual[0] == cerrada[i][0]) && (nodoActual[1] - 1 == cerrada[i][1])) {
           pertenece = 1;
         }
       }
-      if (pertenece = 0) {
+      if (pertenece == 0) {
         for (int i = 0; i < abierta.size(); i++) {
           if (nodoActual[0] == abierta[i][0] && nodoActual[1] - 1 == abierta[i][1]) {
             pertenece = 1;
@@ -415,6 +455,380 @@ std::vector<std::vector<int>> Taxi::CaminoMinimo(bool distancia) {
   
   return caminoMinimo;
 }
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+std::vector<std::vector<int>> Taxi::CaminoMinimo8(bool distancia) {
+
+  std::vector<std::vector<Nodo>> matrizNodos;
+  std::vector<std::vector<int>> abierta;
+  std::vector<std::vector<int>> cerrada;
+
+  std::vector<int> nodoActual {taxiX, taxiY};
+
+  Nodo nodoStart(0, 0, taxiX, taxiY);
+
+  nodoStart.set_h(Heuristica(distancia, taxiX, taxiY));
+
+  matrizNodos.resize(world.GetDimensionX());
+  for (int i = 0; i < matrizNodos.size(); i++) {
+    matrizNodos[i].resize(world.GetDimensionY());
+  }
+  
+  matrizNodos[taxiX][taxiY] = nodoStart;
+
+  abierta.push_back(nodoActual);
+
+  while ((nodoActual[0] != destinoX || nodoActual[1] != destinoY) && !abierta.empty()) {
+
+    float f = INFINITY;
+    std::vector<int> nodoSiguiente(2);
+    for (int i = 0; i < abierta.size(); i++) {
+      if ((matrizNodos[abierta[i][0]][abierta[i][1]].get_h() + matrizNodos[nodoActual[0]][nodoActual[1]].get_g() + 10) < f) {
+        f = (matrizNodos[abierta[i][0]][abierta[i][1]].get_h() + matrizNodos[nodoActual[0]][nodoActual[1]].get_g() + 10);
+        nodoSiguiente[0] = abierta[i][0];
+        nodoSiguiente[1] = abierta[i][1];
+      }
+    }
+    for (int i = 0; i < abierta.size(); i++) {
+      if (abierta[i][0] == nodoSiguiente[0] && abierta[i][1] == nodoSiguiente[1]) {
+        abierta.erase(abierta.begin() + i);
+      }
+    }
+    cerrada.push_back(nodoSiguiente);
+    nodoActual = nodoSiguiente;
+
+    if (MovArriba(nodoActual)) {
+      bool pertenece = 0;
+      for (int i = 0; i < cerrada.size(); i++) {
+        if ((nodoActual[0] - 1 == cerrada[i][0]) && (nodoActual[1] == cerrada[i][1])) {
+          pertenece = 1;
+        }
+      }
+      if (pertenece == 0) {
+        for (int i = 0; i < abierta.size(); i++) {
+          if (nodoActual[0] - 1 == abierta[i][0] && nodoActual[1] == abierta[i][1]) {
+            pertenece = 1;
+          }
+        }
+        if (pertenece) {
+          if (matrizNodos[nodoActual[0] - 1][nodoActual[1]].get_g() > 10 + matrizNodos[nodoActual[0]][nodoActual[1]].get_g()) {
+            matrizNodos[nodoActual[0] - 1][nodoActual[1]].set_h(Heuristica(distancia, nodoActual[0] - 1, nodoActual[1]));
+            matrizNodos[nodoActual[0] - 1][nodoActual[1]].set_coste(10 + matrizNodos[nodoActual[0]][nodoActual[1]].get_g());
+            matrizNodos[nodoActual[0] - 1][nodoActual[1]].set_padre(nodoActual[0], nodoActual[1]);
+          }
+        }
+        else {
+          matrizNodos[nodoActual[0] - 1][nodoActual[1]].set_h(Heuristica(distancia, nodoActual[0] - 1, nodoActual[1]));
+          matrizNodos[nodoActual[0] - 1][nodoActual[1]].set_coste(10 + matrizNodos[nodoActual[0]][nodoActual[1]].get_g());
+          matrizNodos[nodoActual[0] - 1][nodoActual[1]].set_padre(nodoActual[0], nodoActual[1]);
+          std::vector<int> aux {nodoActual[0] - 1, nodoActual[1]};
+          abierta.push_back(aux);
+        }
+      }
+    }
+    else {
+      if (nodoActual[0] - 1 >= world.GetDimensionX() || nodoActual[1] >= world.GetDimensionY() || nodoActual[0] - 1 < 0 || nodoActual[1] < 0) {
+      }
+      else {
+        matrizNodos[nodoActual[0] - 1][nodoActual[1]].set_obstaculo();
+      }
+    }
+    if (MovDer(nodoActual)) {
+      bool pertenece = 0;
+      for (int i = 0; i < cerrada.size(); i++) {
+        if ((nodoActual[0] == cerrada[i][0]) && (nodoActual[1] + 1 == cerrada[i][1])) {
+            pertenece = 1;
+        }
+      }
+      if (pertenece == 0) {
+        for (int i = 0; i < abierta.size(); i++) {
+          if (nodoActual[0] == abierta[i][0] && nodoActual[1] + 1 == abierta[i][1]) {
+            pertenece = 1;
+          }
+        }
+        if (pertenece) {
+          if (matrizNodos[nodoActual[0]][nodoActual[1] + 1].get_g() > 10 + matrizNodos[nodoActual[0]][nodoActual[1]].get_g()) {
+            matrizNodos[nodoActual[0]][nodoActual[1] + 1].set_h(Heuristica(distancia, nodoActual[0], nodoActual[1] + 1));
+            matrizNodos[nodoActual[0]][nodoActual[1] + 1].set_coste(10 + matrizNodos[nodoActual[0]][nodoActual[1]].get_g());
+            matrizNodos[nodoActual[0]][nodoActual[1] + 1].set_padre(nodoActual[0], nodoActual[1]);
+          }
+        }
+        else {
+          matrizNodos[nodoActual[0]][nodoActual[1] + 1].set_h(Heuristica(distancia, nodoActual[0], nodoActual[1] + 1));
+          matrizNodos[nodoActual[0]][nodoActual[1] + 1].set_coste(10 + matrizNodos[nodoActual[0]][nodoActual[1]].get_g());
+          matrizNodos[nodoActual[0]][nodoActual[1] + 1].set_padre(nodoActual[0], nodoActual[1]);
+          std::vector<int> aux {nodoActual[0], nodoActual[1] + 1};
+          abierta.push_back(aux);
+        }
+      }
+    }
+    else {
+      if (nodoActual[0] >= world.GetDimensionX() || nodoActual[1] + 1 >= world.GetDimensionY() || nodoActual[0] < 0 || nodoActual[1] + 1 < 0) {
+      }
+      else {
+        matrizNodos[nodoActual[0]][nodoActual[1] + 1].set_obstaculo();
+      }
+    }
+    if (MovAbajo(nodoActual)) {
+      bool pertenece = 0;
+      for (int i = 0; i < cerrada.size(); i++) {
+        if ((nodoActual[0] + 1 == cerrada[i][0]) && (nodoActual[1] == cerrada[i][1])) {
+          pertenece = 1;
+        }
+      }
+      if (pertenece == 0) {
+        for (int i = 0; i < abierta.size(); i++) {
+          if (nodoActual[0] + 1 == abierta[i][0] && nodoActual[1] == abierta[i][1]) {
+            pertenece = 1;
+          }
+        }
+        if (pertenece) {
+          if (matrizNodos[nodoActual[0] + 1][nodoActual[1]].get_g() > 10 + matrizNodos[nodoActual[0]][nodoActual[1]].get_g()) {
+            matrizNodos[nodoActual[0] + 1][nodoActual[1]].set_h(Heuristica(distancia, nodoActual[0] + 1, nodoActual[1]));
+            matrizNodos[nodoActual[0] + 1][nodoActual[1]].set_coste(10 + matrizNodos[nodoActual[0]][nodoActual[1]].get_g());
+            matrizNodos[nodoActual[0] + 1][nodoActual[1]].set_padre(nodoActual[0], nodoActual[1]);
+          }
+        }
+        else {
+          matrizNodos[nodoActual[0] + 1][nodoActual[1]].set_h(Heuristica(distancia, nodoActual[0] + 1, nodoActual[1]));
+          matrizNodos[nodoActual[0] + 1][nodoActual[1]].set_coste(10 + matrizNodos[nodoActual[0]][nodoActual[1]].get_g());
+          matrizNodos[nodoActual[0] + 1][nodoActual[1]].set_padre(nodoActual[0], nodoActual[1]);
+          std::vector<int> aux {nodoActual[0] + 1, nodoActual[1]};
+          abierta.push_back(aux);
+        }
+      }
+    }
+    else {
+      if (nodoActual[0] + 1 >= world.GetDimensionX() || nodoActual[1] >= world.GetDimensionY() || nodoActual[0] + 1 < 0 || nodoActual[1] < 0) {
+      }
+      else {
+        matrizNodos[nodoActual[0] + 1][nodoActual[1]].set_obstaculo();
+      }
+    }
+    if (MovIzq(nodoActual)) {
+      bool pertenece = 0;
+      for (int i = 0; i < cerrada.size(); i++) {
+        if ((nodoActual[0] == cerrada[i][0]) && (nodoActual[1] - 1 == cerrada[i][1])) {
+          pertenece = 1;
+        }
+      }
+      if (pertenece == 0) {
+        for (int i = 0; i < abierta.size(); i++) {
+          if (nodoActual[0] == abierta[i][0] && nodoActual[1] - 1 == abierta[i][1]) {
+            pertenece = 1;
+          }
+        }
+        if (pertenece) {
+          if (matrizNodos[nodoActual[0]][nodoActual[1] - 1].get_g() > 10 + matrizNodos[nodoActual[0]][nodoActual[1]].get_g()) {
+            matrizNodos[nodoActual[0]][nodoActual[1] - 1].set_h(Heuristica(distancia, nodoActual[0], nodoActual[1] - 1));
+            matrizNodos[nodoActual[0]][nodoActual[1] - 1].set_coste(10 + matrizNodos[nodoActual[0]][nodoActual[1]].get_g());
+            matrizNodos[nodoActual[0]][nodoActual[1] - 1].set_padre(nodoActual[0], nodoActual[1]);
+          }
+        }
+        else {
+          matrizNodos[nodoActual[0]][nodoActual[1] - 1].set_h(Heuristica(distancia, nodoActual[0], nodoActual[1] - 1));
+          matrizNodos[nodoActual[0]][nodoActual[1] - 1].set_coste(10 + matrizNodos[nodoActual[0]][nodoActual[1]].get_g());
+          matrizNodos[nodoActual[0]][nodoActual[1] - 1].set_padre(nodoActual[0], nodoActual[1]);
+          std::vector<int> aux {nodoActual[0], nodoActual[1] - 1};
+          abierta.push_back(aux);
+        }
+      }
+    }
+    else {
+      if (nodoActual[0] >= world.GetDimensionX() || nodoActual[1] - 1 >= world.GetDimensionY() || nodoActual[0] < 0 || nodoActual[1] - 1 < 0) {
+      }
+      else {
+        matrizNodos[nodoActual[0]][nodoActual[1] - 1].set_obstaculo();
+      }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    if (MovArribaDer(nodoActual)) {
+      bool pertenece = 0;
+      for (int i = 0; i < cerrada.size(); i++) {
+        if ((nodoActual[0] - 1 == cerrada[i][0]) && (nodoActual[1] + 1 == cerrada[i][1])) {
+          pertenece = 1;
+        }
+      }
+      if (pertenece == 0) {
+        for (int i = 0; i < abierta.size(); i++) {
+          if (nodoActual[0] - 1 == abierta[i][0] && nodoActual[1] + 1 == abierta[i][1]) {
+            pertenece = 1;
+          }
+        }
+        if (pertenece) {
+          if (matrizNodos[nodoActual[0] - 1][nodoActual[1] + 1].get_g() > 14 + matrizNodos[nodoActual[0]][nodoActual[1]].get_g()) {
+            matrizNodos[nodoActual[0] - 1][nodoActual[1] + 1].set_h(Heuristica(distancia, nodoActual[0] - 1, nodoActual[1] + 1));
+            matrizNodos[nodoActual[0] - 1][nodoActual[1] + 1].set_coste(14 + matrizNodos[nodoActual[0]][nodoActual[1]].get_g());
+            matrizNodos[nodoActual[0] - 1][nodoActual[1] + 1].set_padre(nodoActual[0], nodoActual[1]);
+          }
+        }
+        else {
+          matrizNodos[nodoActual[0] - 1][nodoActual[1] + 1].set_h(Heuristica(distancia, nodoActual[0] - 1, nodoActual[1] + 1));
+          matrizNodos[nodoActual[0] - 1][nodoActual[1] + 1].set_coste(14 + matrizNodos[nodoActual[0]][nodoActual[1]].get_g());
+          matrizNodos[nodoActual[0] - 1][nodoActual[1] + 1].set_padre(nodoActual[0], nodoActual[1]);
+          std::vector<int> aux {nodoActual[0] - 1, nodoActual[1] + 1};
+          abierta.push_back(aux);
+        }
+      }
+    }
+    else {
+      if (nodoActual[0] - 1 >= world.GetDimensionX() || nodoActual[1] + 1 >= world.GetDimensionY() || nodoActual[0] - 1 < 0 || nodoActual[1] + 1 < 0) {
+      }
+      else {
+        matrizNodos[nodoActual[0] - 1][nodoActual[1] + 1].set_obstaculo();
+      }
+    }
+    if (MovAbajoDer(nodoActual)) {
+      bool pertenece = 0;
+      for (int i = 0; i < cerrada.size(); i++) {
+        if ((nodoActual[0] + 1 == cerrada[i][0]) && (nodoActual[1] + 1 == cerrada[i][1])) {
+            pertenece = 1;
+        }
+      }
+      if (pertenece == 0) {
+        for (int i = 0; i < abierta.size(); i++) {
+          if (nodoActual[0] + 1 == abierta[i][0] && nodoActual[1] + 1 == abierta[i][1]) {
+            pertenece = 1;
+          }
+        }
+        if (pertenece) {
+          if (matrizNodos[nodoActual[0] + 1][nodoActual[1] + 1].get_g() > 14 + matrizNodos[nodoActual[0]][nodoActual[1]].get_g()) {
+            matrizNodos[nodoActual[0] + 1][nodoActual[1] + 1].set_h(Heuristica(distancia, nodoActual[0] + 1, nodoActual[1] + 1));
+            matrizNodos[nodoActual[0] + 1][nodoActual[1] + 1].set_coste(14 + matrizNodos[nodoActual[0]][nodoActual[1]].get_g());
+            matrizNodos[nodoActual[0] + 1][nodoActual[1] + 1].set_padre(nodoActual[0], nodoActual[1]);
+          }
+        }
+        else {
+          matrizNodos[nodoActual[0] + 1][nodoActual[1] + 1].set_h(Heuristica(distancia, nodoActual[0] + 1, nodoActual[1] + 1));
+          matrizNodos[nodoActual[0] + 1][nodoActual[1] + 1].set_coste(14 + matrizNodos[nodoActual[0]][nodoActual[1]].get_g());
+          matrizNodos[nodoActual[0] + 1][nodoActual[1] + 1].set_padre(nodoActual[0], nodoActual[1]);
+          std::vector<int> aux {nodoActual[0] + 1, nodoActual[1] + 1};
+          abierta.push_back(aux);
+        }
+      }
+    }
+    else {
+      if (nodoActual[0] + 1 >= world.GetDimensionX() || nodoActual[1] + 1 >= world.GetDimensionY() || nodoActual[0] + 1 < 0 || nodoActual[1] + 1 < 0) {
+      }
+      else {
+        matrizNodos[nodoActual[0] + 1][nodoActual[1] + 1].set_obstaculo();
+      }
+    }
+    if (MovArribaIzq(nodoActual)) {
+      bool pertenece = 0;
+      for (int i = 0; i < cerrada.size(); i++) {
+        if ((nodoActual[0] - 1 == cerrada[i][0]) && (nodoActual[1] - 1 == cerrada[i][1])) {
+          pertenece = 1;
+        }
+      }
+      if (pertenece == 0) {
+        for (int i = 0; i < abierta.size(); i++) {
+          if (nodoActual[0] - 1 == abierta[i][0] && nodoActual[1] - 1 == abierta[i][1]) {
+            pertenece = 1;
+          }
+        }
+        if (pertenece) {
+          if (matrizNodos[nodoActual[0] - 1][nodoActual[1] - 1].get_g() > 14 + matrizNodos[nodoActual[0]][nodoActual[1]].get_g()) {
+            matrizNodos[nodoActual[0] - 1][nodoActual[1] - 1].set_h(Heuristica(distancia, nodoActual[0] - 1, nodoActual[1] - 1));
+            matrizNodos[nodoActual[0] - 1][nodoActual[1] - 1].set_coste(14 + matrizNodos[nodoActual[0]][nodoActual[1]].get_g());
+            matrizNodos[nodoActual[0] - 1][nodoActual[1] - 1].set_padre(nodoActual[0], nodoActual[1]);
+          }
+        }
+        else {
+          matrizNodos[nodoActual[0] - 1][nodoActual[1] - 1].set_h(Heuristica(distancia, nodoActual[0] - 1, nodoActual[1] - 1));
+          matrizNodos[nodoActual[0] - 1][nodoActual[1] - 1].set_coste(14 + matrizNodos[nodoActual[0]][nodoActual[1]].get_g());
+          matrizNodos[nodoActual[0] - 1][nodoActual[1] - 1].set_padre(nodoActual[0], nodoActual[1]);
+          std::vector<int> aux {nodoActual[0] - 1, nodoActual[1] - 1};
+          abierta.push_back(aux);
+        }
+      }
+    }
+    else {
+      if (nodoActual[0] - 1 >= world.GetDimensionX() || nodoActual[1] - 1 >= world.GetDimensionY() || nodoActual[0] - 1 < 0 || nodoActual[1] - 1 < 0) {
+      }
+      else {
+        matrizNodos[nodoActual[0] - 1][nodoActual[1] - 1].set_obstaculo();
+      }
+    }
+    if (MovAbajoIzq(nodoActual)) {
+      bool pertenece = 0;
+      for (int i = 0; i < cerrada.size(); i++) {
+        if ((nodoActual[0] + 1 == cerrada[i][0]) && (nodoActual[1] - 1 == cerrada[i][1])) {
+          pertenece = 1;
+        }
+      }
+      if (pertenece == 0) {
+        for (int i = 0; i < abierta.size(); i++) {
+          if (nodoActual[0] + 1 == abierta[i][0] && nodoActual[1] - 1 == abierta[i][1]) {
+            pertenece = 1;
+          }
+        }
+        if (pertenece) {
+          if (matrizNodos[nodoActual[0] + 1][nodoActual[1] - 1].get_g() > 14 + matrizNodos[nodoActual[0]][nodoActual[1]].get_g()) {
+            matrizNodos[nodoActual[0] + 1][nodoActual[1] - 1].set_h(Heuristica(distancia, nodoActual[0] + 1, nodoActual[1] - 1));
+            matrizNodos[nodoActual[0] + 1][nodoActual[1] - 1].set_coste(14 + matrizNodos[nodoActual[0]][nodoActual[1]].get_g());
+            matrizNodos[nodoActual[0]+ 1][nodoActual[1] - 1].set_padre(nodoActual[0], nodoActual[1]);
+          }
+        }
+        else {
+          matrizNodos[nodoActual[0] + 1][nodoActual[1] - 1].set_h(Heuristica(distancia, nodoActual[0] + 1, nodoActual[1] - 1));
+          matrizNodos[nodoActual[0] + 1][nodoActual[1] - 1].set_coste(10 + matrizNodos[nodoActual[0]][nodoActual[1]].get_g());
+          matrizNodos[nodoActual[0] + 1][nodoActual[1] - 1].set_padre(nodoActual[0], nodoActual[1]);
+          std::vector<int> aux {nodoActual[0] + 1, nodoActual[1] - 1};
+          abierta.push_back(aux);
+        }
+      }
+    }
+    else {
+      if (nodoActual[0] + 1 >= world.GetDimensionX() || nodoActual[1] - 1 >= world.GetDimensionY() || nodoActual[0] + 1 < 0 || nodoActual[1] - 1 < 0) {
+      }
+      else {
+        matrizNodos[nodoActual[0] + 1][nodoActual[1] - 1].set_obstaculo();
+      }
+    }
+  }
+
+  std::vector<std::vector<int>> caminoMinimo;
+  if (nodoActual[0] != destinoX && nodoActual[1] != destinoY) {
+    return caminoMinimo;
+  }
+  caminoMinimo.push_back(nodoActual);                                                      // Creamos el vector con el camino mínimo empezando por el destino
+
+  do {                                                                                     // Metemos por orden los predecesores de cada casilla en orden inverso
+    caminoMinimo.push_back(matrizNodos[nodoActual[0]][nodoActual[1]].get_padre());         // dentro del vector hasta llegar a la casilla de inicio del taxi
+    nodoActual[0] = caminoMinimo[caminoMinimo.size() - 1][0];
+    nodoActual[1] = caminoMinimo[caminoMinimo.size() - 1][1];
+  } while (nodoActual[0] != taxiX || nodoActual[1] != taxiY);
+  
+  return caminoMinimo;
+}
+
 
 float Taxi::Heuristica(bool distancia, int coordx, int coordy) {
 
