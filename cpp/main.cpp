@@ -8,6 +8,8 @@
 #include <fstream>
 #include <string>
 
+// Compilación para depuración: g++ -g -Wall ./cpp/main.cpp ./cpp/taxi.cpp ./cpp/mundo.cpp ./cpp/mapa.cpp ./cpp/nodo.cpp -o Taxi -lsfml-graphics -lsfml-window -lsfml-system
+
 int* ConvertToArray (std::vector<std::vector<int>> level, int levelArray[]) {
   int contador = 0;
   for (int i = 0; i < level.size(); i++) {
